@@ -58,7 +58,7 @@ if __name__ == '__main__':
     # agent_inputs = env.get_agent_inputs(workerList)
     runner = TestRunner(1, cfg)
     # cost_set, route_set, log_p_set, reward_set,reward = runner.single_thread_job(cfg=cfg, env=env)
-    # baseline = torch.Tensor([0]).cuda()
+    # baseline = torch.Tensor([0]).cpu()
     # advantage = runner.get_advantage(reward.expand_as(cost_set), baseline)
     # loss = runner.get_loss(advantage, log_p_set)
     # loss.backward()

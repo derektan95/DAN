@@ -20,7 +20,7 @@ class Env():
             np.random.seed(self.seed)
         depot_position = np.random.rand(1, 1, 2)
         target_position = np.random.rand(1, self.target_size - 1, 2)
-        target_inputs = [torch.FloatTensor(depot_position).cuda(), torch.FloatTensor(target_position).cuda()]
+        target_inputs = [torch.FloatTensor(depot_position).cpu(), torch.FloatTensor(target_position).cpu()]
         return target_inputs
 
     def generate_mask(self):
@@ -39,7 +39,7 @@ class Env():
             agent_next_action_gap.append(workersList[i].next_select_gap)
             agent_partial_route.append(workersList[i].point_list)
         agent_position = torch.stack(agent_position, dim=2).squeeze(0)
-        agent_next_action_gap = torch.Tensor(agent_next_action_gap).unsqueeze(0).unsqueeze(-1).cuda()
+        agent_next_action_gap = torch.Tensor(agent_next_action_gap).unsqueeze(0).unsqueeze(-1).cpu()
         agent_inputs = torch.cat((agent_position, agent_next_action_gap), -1)
         return agent_inputs
 

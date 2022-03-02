@@ -37,10 +37,10 @@ class Runner(object):
         return self.baseline_model(env,self.cfg.agent_amount)
 
     def get_logp(self):
-        agent_inputs = torch.cat(self.episode_buffer[0]).squeeze(0).cuda()
-        depot_inputs = torch.cat(self.episode_buffer[1]).squeeze(0).cuda()
-        city_inputs = torch.cat(self.episode_buffer[2]).squeeze(0).cuda()
-        mask = torch.cat(self.episode_buffer[3]).squeeze(0).cuda()
+        agent_inputs = torch.cat(self.episode_buffer[0]).squeeze(0).cpu()
+        depot_inputs = torch.cat(self.episode_buffer[1]).squeeze(0).cpu()
+        city_inputs = torch.cat(self.episode_buffer[2]).squeeze(0).cpu()
+        mask = torch.cat(self.episode_buffer[3]).squeeze(0).cpu()
         agent_feature = self.model.local_agent_encoder(agent_inputs)
         target_feature = self.model.local_target_encoder(depot_inputs, city_inputs)
         _, log_prob = self.model.local_decoder(target_feature=target_feature,
@@ -48,7 +48,7 @@ class Runner(object):
                                                    agent_feature=agent_feature,
                                                    mask=mask,
                                                    decode_type=self.decode_type)
-        action_list=torch.cat(self.episode_buffer[4]).squeeze(0).cuda()
+        action_list=torch.cat(self.episode_buffer[4]).squeeze(0).cpu()
         logp=torch.gather(log_prob,1,action_list.unsqueeze(1))
         entropy=(log_prob*log_prob.exp()).sum(dim=-1).mean()
         return logp, entropy

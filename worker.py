@@ -23,7 +23,7 @@ class Worker():
         self.target_set = torch.cat((target_inputs[0], target_inputs[1]), dim=1)  # it is the depot+target input tensor
         self.agent_position = target_inputs[0]  # initial agent position at the depot
         
-        self.point_list = torch.tensor([0]).cuda()  # list to store route, start at depot
+        self.point_list = torch.tensor([0]).cpu()  # list to store route, start at depot
         self.action_list = []
         self.observation_agent = []
         self.observation_depot = []
@@ -36,7 +36,7 @@ class Worker():
         self.decode_type = decode_type
 
     def calculate_encoded_agent(self, agent_inputs):
-        agent_inputs = agent_inputs - torch.cat((self.agent_position,torch.FloatTensor([[[0]]]).cuda()),dim=-1)
+        agent_inputs = agent_inputs - torch.cat((self.agent_position,torch.FloatTensor([[[0]]]).cpu()),dim=-1)
         agent_feature = self.agent_encoder(agent_inputs)
         return agent_feature, agent_inputs
 

@@ -6,6 +6,7 @@ import numpy as np
 from runner_for_test import TestRunner
 from config import config
 from env import Env
+import time
 
 cfg = config()
 
@@ -23,7 +24,7 @@ def show(target, routes, max_length):
     for route in routes:
         print(route)
         plt.plot(target[:, 0], target[:, 1], 'ro', markersize=4)
-        depot = torch.tensor([0]).cuda()
+        depot = torch.tensor([0]).cpu()
         route = torch.cat([route, depot])
         np_tour = route[:].cpu().detach()
         plt.plot(target[np_tour, 0], target[np_tour, 1], linewidth=1)
@@ -34,11 +35,23 @@ def show(target, routes, max_length):
 
 
 if __name__ == '__main__':
+
+    start = time.time()
+
     env = Env(cfg, cfg.seed)
     runner = TestRunner(metaAgentID=0, cfg=cfg, decode_type=decode_type, plot=True)
 
     checkpoint = torch.load(model_path + '/model_states.pth')
     runner.model.load_state_dict(checkpoint['model'])
+
+    # print("========================")
+    # print(runner.model)
+    # print("========================")
+
+    # total_params = sum(p.numel() for p in runner.model.parameters())
+    # print("\n======================")
+    # print(total_params)
+    # print("======================\n")
 
     with torch.no_grad():
         max_length, route_list = runner.sample(env)
@@ -59,3 +72,7 @@ if __name__ == '__main__':
     target_set = torch.cat((target_inputs[0], target_inputs[1]), dim=1)
 
     show(target_set, min_route_list, min_max_length)
+
+    end = time.time()
+
+    print(end - start)
