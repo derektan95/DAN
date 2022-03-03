@@ -1,3 +1,10 @@
+###########################################################################
+# LOCATION TO HARDCODE OBSERVATION STATE                                  #
+# City Positions: env.py > generate_target_input > target_inputs          #
+# Agent Positions: worker.py > calculated_encoded_agent > agent_inputs    #
+# Global Mask: env.py > generate_mask > mask                              #
+###########################################################################
+
 import os
 import argparse
 import torch
@@ -7,7 +14,7 @@ def config(args=None):
     parser = argparse.ArgumentParser()
 
     # data
-    parser.add_argument('--target_size', type=int, default=20, help="The targets amount")
+    parser.add_argument('--target_size', type=int, default=4, help="The targets amount")
     parser.add_argument('--batch_size', type=int, default=16, help="Batch size")
 
     # model
@@ -18,7 +25,7 @@ def config(args=None):
     parser.add_argument('--lr', type=float, default=1e-5, help="learning rate")
     parser.add_argument('--lr_decay', type=float, default=0.96, help='learning rate decay per epoch')
     parser.add_argument('--max_grad_norm', type=float, default=1.0, help="clip the gradient l2 norm")
-    parser.add_argument('--agent_amount',type=int,default=5,help="agent amount")
+    parser.add_argument('--agent_amount',type=int,default=3,help="agent amount")
     parser.add_argument('--meta_agent_amount', type=int, default=8, help="meta agent amount")
     parser.add_argument('--number_of_gpu', default=4, help="number of GPUs")
 

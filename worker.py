@@ -36,7 +36,9 @@ class Worker():
         self.decode_type = decode_type
 
     def calculate_encoded_agent(self, agent_inputs):
+        # print("Agent shape: ",agent_inputs.size())
         agent_inputs = agent_inputs - torch.cat((self.agent_position,torch.FloatTensor([[[0]]]).cuda()),dim=-1)
+        # print("~~~~RELATIVE AGENT POSE: ", agent_inputs)
         agent_feature = self.agent_encoder(agent_inputs)
         return agent_feature, agent_inputs
 

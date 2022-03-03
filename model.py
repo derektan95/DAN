@@ -30,41 +30,51 @@ class Model(nn.Module):
                              local_target_encoder=self.local_target_encoder,
                              decode_type=self.decode_type) for i in
                       range(agent_amount)]
-        global_time=0
-        while True:
-            all_finished = True
-            global_time += 0.1
-            for i in range(agent_amount):
-                if workerList[i].next_select_gap <= 0:
-                    agent_inputs = env.get_agent_inputs(workerList,i)
-                    if routes is None:
-                        next_target_index, _ = workerList[i].work(env, agent_inputs)
-                        if next_target_index == 0:
-                            workerList[i].sum_distance += 0.1
-                    else:
-                        next_target = routes[i][0]
-                        next_target_index, _ = workerList[i].work(env, agent_inputs, next_target)
-                        routes[i] = routes[i][1:]
-                    if next_target_index is not None:
-                        if next_target_index.item() != 0:
-                            env.global_mask = env.global_mask.scatter_(dim=1, index=next_target_index.unsqueeze(1), value=1)
+
+        # print("AGENT_SIZE: ", env.get_agent_inputs(workerList,0).shape)
+        agent_inputs = torch.Tensor([[[0.1, 0.1, 0], [0, 0, 0], [0.45, 0.0, 0]]]).cuda()   # SIMULATED AGENT POSITIONS
+        print("AGENT_SIZE: ", agent_inputs.shape)
+        next_target_index, _ = workerList[0].work(env, agent_inputs)
+        print("===== Next_target_index: ", next_target_index)
+
+        # global_time=0
+        # while True:
+        #     all_finished = True
+        #     global_time += 0.1
+        #     for i in range(agent_amount):
+        #         if workerList[i].next_select_gap <= 0:
+        #             agent_inputs = env.get_agent_inputs(workerList,i)
+        #             # print("===agent_inputs: ", agent_inputs)
+        #             if routes is None:
+        #                 print("AGENT ID: ", i)
+        #                 next_target_index, _ = workerList[i].work(env, agent_inputs)
+        #                 if next_target_index == 0:
+        #                     workerList[i].sum_distance += 0.1
+        #             else:
+        #                 next_target = routes[i][0]
+        #                 print("AGENT ID: ", i)
+        #                 next_target_index, _ = workerList[i].work(env, agent_inputs, next_target)
+        #                 routes[i] = routes[i][1:]
+        #             if next_target_index is not None:
+        #                 if next_target_index.item() != 0:
+        #                     env.global_mask = env.global_mask.scatter_(dim=1, index=next_target_index.unsqueeze(1), value=1)
                 
-                if self.training:
-                    workerList[i].next_select_gap += -0.1
-                else:
-                    workerList[i].next_select_gap += -0.01
+        #         if self.training:
+        #             workerList[i].next_select_gap += -0.1
+        #         else:
+        #             workerList[i].next_select_gap += -0.01
                 
-                if workerList[i].next_select_gap < 0:
-                    workerList[i].next_select_gap = 0
-                all_finished = all_finished and workerList[i].finish
-            if all_finished:
-                for i in range(agent_amount):
-                    workerList[i].sum_distance += workerList[i].get_sum_distance()
-                break
-            if self.training and len(workerList[i].action_list)>=150:
-                for i in range(agent_amount):
-                    workerList[i].sum_distance += workerList[i].get_sum_distance()+10
-                break
+        #         if workerList[i].next_select_gap < 0:
+        #             workerList[i].next_select_gap = 0
+        #         all_finished = all_finished and workerList[i].finish
+        #     if all_finished:
+        #         for i in range(agent_amount):
+        #             workerList[i].sum_distance += workerList[i].get_sum_distance()
+        #         break
+        #     if self.training and len(workerList[i].action_list)>=150:
+        #         for i in range(agent_amount):
+        #             workerList[i].sum_distance += workerList[i].get_sum_distance()+10
+        #         break
         cost_list = []
         route_list = []
         reward_list = []
@@ -110,3 +120,9 @@ class Model(nn.Module):
         """
         log_p = torch.sum(torch.gather(input=_log_p, dim=2, index=pi[:, 1:, None]), dim=1)
         return log_p
+
+
+
+        # agent_inputs = env.get_agent_inputs(workerList,0)
+        # next_target_index, _ = workerList.work(env, agent_inputs)
+        # print("===== Next_target_index: ", next_target_index)

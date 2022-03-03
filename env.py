@@ -18,13 +18,17 @@ class Env():
     def generate_target_inputs(self):
         if self.seed is not None:
             np.random.seed(self.seed)
-        depot_position = np.random.rand(1, 1, 2)
+        depot_position = np.zeros((1,1,2))#np.random.rand(1, 1, 2)
         target_position = np.random.rand(1, self.target_size - 1, 2)
         target_inputs = [torch.FloatTensor(depot_position).cuda(), torch.FloatTensor(target_position).cuda()]
+        print("TARGET_INPUTS: ", target_inputs)
         return target_inputs
 
     def generate_mask(self):
+        #mask = torch.tensor([[0,0,0,0,0]]).to(self.device) #
         mask = torch.zeros((1, self.target_size), device=self.device, dtype=torch.int64)
+        mask[0][0] = 1          # FORCE FIRST CITY TO BE VISITED, COS (0,0) IS WHERE ROBOTS INIT AT
+        print("Mask: ",mask)
         return mask
 
     def update_mask(self, target_index):
