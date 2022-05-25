@@ -1,5 +1,5 @@
 import torch
-import ray
+#import ray
 import numpy as np
 from config import config
 from model import Model
@@ -37,9 +37,9 @@ class TestRunner(object):
             return max_length
 
 
-@ray.remote(num_gpus= cfg.number_of_gpu / cfg.meta_agent_amount, num_cpus=1) # use this for training and sampling test
-class RayTestRunner(TestRunner):
-    pass
+#@ray.remote(num_gpus= cfg.number_of_gpu / cfg.meta_agent_amount, num_cpus=1) # use this for training and sampling test
+#class RayTestRunner(TestRunner):
+#    pass
 
 
 if __name__ == '__main__':
